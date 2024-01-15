@@ -1,0 +1,97 @@
+#個人的なメモ
+memo.md
+
+#Xcodeプロジェクトに関連するユーザー固有の設定や情報を格納する
+xcuserdata/
+
+
+#フォルダの表示設定に関する情報を保存するファイル。
+.DS_Store
+
+
+#ビルドファイル。
+build/
+
+
+#プロジェクトごとに生成するキャッシュデータ、インデックス、ログなどが入っているデータ。
+DerivedData/
+
+
+#Xcodeのプライベート設定（ウィンドウサイズ、ブックマーク、ブレイクポイントなど）
+perspectivev3-file
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+
+
+#上記デフォルト設定ファイル。これらは除外せずに追加（除外の除外）をする。
+!default.pbxuser
+!default.mode1v3
+!default.mode2v3
+!default.perspectivev3
+
+
+
+#ipaファイルを作成すると作られるファイル
+*.ipa
+
+
+#dSYMは、debug symbolの略で、アプリをコンパイルする過程で生成されるアプリのソースコードに含まれるクラス名やグローバル変数、メソッド名などのシンボル（名前）のリストのこと。どこでクラッシュしたのかを解析する時に使われる。
+*.dSYM.zip
+*.dSYM
+
+
+#XcodeのプロジェクトのBuild Scheme、構成などが入っているデータ。
+*.xcodeproj/*
+*.xcodeproj/project.pbxproj
+*.xcodeproj/xcshareddata/
+!*.xcworkspace/contents.xcworkspacedata
+
+
+#CocoaPodsでインストールしたライブラリのデータ。
+Pods/*
+
+
+#Carthageでインストールしたライブラリのデータ。
+Carthage/Build/
+
+
+## その他のファイル
+*.moved-aside
+*.xccheckout
+*.xcscmblueprint
+
+
+## Obj-C/Swift 関連のファイル
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+
+## Playgrounds関連のファイル
+timeline.xctimeline
+playground.xcworkspace
+
+
+
+# Swift Package Manager
+#
+# Swift Package Managerの依存関係からのソースコードのチェックインを避けたい場合は、この行を追加
+#
+# Packages ディレクトリは、古いバージョンのSwift Package Managerで使用されていたもので、依存関係のソースコードがここにクローンされていました。現在のSPMでは使用されていませんが、過去の互換性のために.gitignoreに含めることが推奨されています。
+# Packages/
+#
+#Package.pins ファイルは、プロジェクトの依存関係のバージョンをピン留め（固定）するためのものでした。これにより、チームのメンバー全員が同じバージョンの依存関係を使用することが保証されていました。しかし、新しいバージョンのSPMではこのファイルは非推奨となっており、代わりに Package.resolved が使用されるようになりました。
+# Package.pins
+#
+# Package.resolved ファイルは、プロジェクトの依存関係の具体的なバージョンやリビジョンを記録するものです。これにより、全ての開発者が同じバージョンの依存関係を使用することができます。通常はこのファイルをGitにチェックインすることで、全てのチームメンバーが一貫した依存関係を持つようにします。
+# Package.resolved
+#
+#.build ディレクトリは、SPMがビルド時に一時的なファイルを保存する場所です。これにはコンパイルされたバイナリや中間ファイルなどが含まれます。これは一時的なファイルなので、Gitの追跡対象から除外するのが一般的です。
+.build/
+
+
+
+
