@@ -100,3 +100,17 @@ DispatchQeue.global().async{
 - iOS15からasync{}キーワードが登場したものの、XCode13より廃止となりTask{}キーワードに変更された
 - asyncDetached{}も同様に廃止となり、Task.detached{}に変更された
 
+
+###　非同期処理を行う関数の作り方
+```Swift
+///asyncをつける
+    private func getDate() async -> CurrentDate?{
+        //URLをアンラップ
+        guard let url = URL(string: "https://glorious-neat-antarctopelta.glitch.me/current-date")else{
+            fatalError("URL is incorrect!")
+        }
+        //URLが間違っていない場合は非同期でセッション開始
+        //エラーが生じる可能性があるでthrowsとtryをつけている
+        try await URLSession.shared.data(from: url)
+    }
+```
