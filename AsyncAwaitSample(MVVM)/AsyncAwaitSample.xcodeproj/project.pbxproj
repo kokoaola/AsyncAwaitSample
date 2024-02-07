@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3BD2DE1B2B7A704E00132129 /* Webservice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BD2DE1A2B7A704E00132129 /* Webservice.swift */; };
+		3BD2DE1D2B7A70C500132129 /* CurrentDateListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BD2DE1C2B7A70C500132129 /* CurrentDateListViewModel.swift */; };
+		3BD2DE1F2B7A77B800132129 /* CurrentDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BD2DE1E2B7A77B800132129 /* CurrentDate.swift */; };
 		3BE0959B2B5577F70009E2EB /* AsyncAwaitSampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BE0959A2B5577F70009E2EB /* AsyncAwaitSampleApp.swift */; };
 		3BE0959D2B5577F70009E2EB /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BE0959C2B5577F70009E2EB /* ContentView.swift */; };
 		3BE0959F2B5577F80009E2EB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3BE0959E2B5577F80009E2EB /* Assets.xcassets */; };
@@ -14,6 +17,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3BD2DE1A2B7A704E00132129 /* Webservice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Webservice.swift; sourceTree = "<group>"; };
+		3BD2DE1C2B7A70C500132129 /* CurrentDateListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentDateListViewModel.swift; sourceTree = "<group>"; };
+		3BD2DE1E2B7A77B800132129 /* CurrentDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentDate.swift; sourceTree = "<group>"; };
 		3BE095972B5577F70009E2EB /* AsyncAwaitSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AsyncAwaitSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3BE0959A2B5577F70009E2EB /* AsyncAwaitSampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncAwaitSampleApp.swift; sourceTree = "<group>"; };
 		3BE0959C2B5577F70009E2EB /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -53,6 +59,9 @@
 			children = (
 				3BE0959A2B5577F70009E2EB /* AsyncAwaitSampleApp.swift */,
 				3BE0959C2B5577F70009E2EB /* ContentView.swift */,
+				3BD2DE1A2B7A704E00132129 /* Webservice.swift */,
+				3BD2DE1C2B7A70C500132129 /* CurrentDateListViewModel.swift */,
+				3BD2DE1E2B7A77B800132129 /* CurrentDate.swift */,
 				3BE0959E2B5577F80009E2EB /* Assets.xcassets */,
 				3BE095A02B5577F80009E2EB /* Preview Content */,
 			);
@@ -139,6 +148,9 @@
 			files = (
 				3BE0959D2B5577F70009E2EB /* ContentView.swift in Sources */,
 				3BE0959B2B5577F70009E2EB /* AsyncAwaitSampleApp.swift in Sources */,
+				3BD2DE1D2B7A70C500132129 /* CurrentDateListViewModel.swift in Sources */,
+				3BD2DE1F2B7A77B800132129 /* CurrentDate.swift in Sources */,
+				3BD2DE1B2B7A704E00132129 /* Webservice.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
