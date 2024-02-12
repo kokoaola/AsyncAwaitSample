@@ -19,6 +19,7 @@ class Webservice{
         }
         //URLが間違っていない場合は非同期でセッション開始
         //エラーが生じる可能性があるでthrowsとtryをつけている
+        //URLSessionはすでにasyncとawaitが備わっている
         let (data, _) = try await URLSession.shared.data(from: url)
         let decoded = try? JSONDecoder().decode(CurrentDate.self, from: data)
         //nilとなる可能性があるためtry?をつける
