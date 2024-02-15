@@ -113,7 +113,7 @@ DispatchQeue.global().async{
 
 
 ### Continuationとは
-- Continuationとは、従来のコールバックベースの非同期API等の処理を、async/await構文で扱えるようにするための機能のこと
+- Continuationとは、従来のコールバックベースの非同期API等の処理を、async/await構文で扱えるようにするための機能のこと。サードパーティの関数に対してもasync/awaitに変換できて便利
 
 #### コールバックベースの非同期関数
 ```Swift
@@ -143,7 +143,7 @@ func getPosts() async -> [Post] {
     await withCheckedContinuation { continuation in
         // 既存のコールバックベースの非同期関数を呼び出し
         fetchPosts { posts in
-            // 非同期処理が完了したら、Continuationを通じて結果を返す
+            // 非同期処理が完了したら、resumeで一時停止を解放しContinuationを通じて結果を返す
             continuation.resume(returning: posts)
         }
     }
