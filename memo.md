@@ -159,12 +159,40 @@ func exampleUsage() async {
 
 ```
 
+#### UIと関連づけて非同期関数を使用する
+```Swift
+//ビューの表示の際に非同期タスクを実行
+//.taskクロージャは.onAppearの非同期処理版
+Circle()
+    .task {
+    await newsSourceListViewModel.getSources()
+    }
 
+//ボタンで実装
+    .navigationBarItems(trailing: Button(action: {
+        //非同期用のクロージャにいないため、Taskキーワードが必須
+        Task{
+            await newsSourceListViewModel.getSources()
+        }
+    }, label: {
+        Image(systemName: "arrow.clockwise.circle")
+    }))
+```
 
-## MainActorとは
-ディスパッチキューを使用せずに、メインキューに自動的に割り当てられられる
+## @MainActorとは
+- @MainActorとは、UIの更新などをブロック単位でまとめてメインスレッドで実行する操作を扱うための機能
+- クラスに装飾すると、すべてのプロパティとすべての関数がメインスレッドを使用する
+- 修飾された関数内でawaitを使用すると、awaitの非同期関数から戻った後のコードがメインスレッドで実行されることが保証される
+- 非同期処理の結果をメインスレッドで安全に扱うための仕組み
+- ディスパッチに関するDispatchQueue.main.async { }の記述は要らなくなる
 
-
+```Swift
+@MainActor func getData() async {
+    let data = await fetchData() // バックグラウンドでデータをフェッチ
+    // fetchDataの実行が完了し、ここに制御が戻ると、以下のUI更新コードはメインスレッドで実行される
+    self.label.text = data
+}
+```
 
 ## メモ
 - iOS15からasync{}キーワードが登場したものの、XCode13より廃止となりTask{}キーワードに変更された
