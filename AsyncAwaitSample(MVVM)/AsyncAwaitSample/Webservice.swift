@@ -17,12 +17,12 @@ class Webservice{
         guard let url = URL(string: "https://glorious-neat-antarctopelta.glitch.me/current-date")else{
             fatalError("URL is incorrect!")
         }
-        //URLが間違っていない場合は非同期でセッション開始
-        //エラーが生じる可能性があるでthrowsとtryをつけている
+        //URLが正しい場合は非同期でセッション開始
+        //エラーが生じる可能性がある関数を実行するためtryを使う
         //URLSessionはすでにasyncとawaitが備わっている
         let (data, _) = try await URLSession.shared.data(from: url)
+        //エラーが生じる可能性がああり、エラーが発生した時はnilを返す&発生しなかった時はoptional型を返しためtry?をつける
         let decoded = try? JSONDecoder().decode(CurrentDate.self, from: data)
-        //nilとなる可能性があるためtry?をつける
         return decoded
     }
 }

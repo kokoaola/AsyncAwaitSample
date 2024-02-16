@@ -55,10 +55,10 @@ struct ContentView: View {
             fatalError("URL is incorrect!")
         }
         //URLが間違っていない場合は非同期でセッション開始
-        //エラーが生じる可能性があるでthrowsとtryをつけている
+        //エラーが生じる可能性がある関数を実行するためtryを使う
         let (data, _) = try await URLSession.shared.data(from: url)
         let decoded = try? JSONDecoder().decode(CurrentDate.self, from: data)
-        //nilとなる可能性があるためtry?をつける
+        //エラーが生じる可能性がああり、エラーが発生した時はnilを返す&発生しなかった時はoptional型を返しためtry?をつける
         return decoded
     }
     
