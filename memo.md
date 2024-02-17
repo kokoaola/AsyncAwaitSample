@@ -112,7 +112,8 @@ DispatchQeue.global().async{
 
 
 ## Continuationとは
-- Continuationとは、従来のコールバックベースの非同期API等の処理を、async/await構文で扱えるようにするための機能のこと。サードパーティの関数に対してもasync/awaitに変換できて便利
+- Continuationとは、従来のコールバックベースの非同期API等の処理を、async/await構文で扱えるようにするための機能のこと
+- アクセスできないサードパーティの関数に対してもasync/awaitに変換できて便利
 
 #### コールバックベースの非同期関数
 ```Swift
@@ -120,9 +121,7 @@ DispatchQeue.global().async{
 //非同期処理を実行し、完了したらcompletionハンドラを呼び出す
 func fetchPosts(completion: ([Post]) -> Void){
     //データの取得の処理
-
-    //データを返すコンプリーションハンドラを呼び出す
-    completion(posts)
+    completion(posts)//データを返すコンプリーションハンドラを呼び出す
 }
 
 //使う時
@@ -135,10 +134,11 @@ fetchPosts { posts in
 
 ```
 
-#### async/awaitパターンで使用するための関数
+#### async/awaitパターンでラップして使用する関数
 ```Swift
 // Postの配列を非同期で取得する関数
 func getPosts() async -> [Post] {
+    //withCheckedThrowingContinuationは非同期処理が成功した場合に結果を返すか、失敗した場合にエラーを投げる
     await withCheckedContinuation { continuation in
         // 既存のコールバックベースの非同期関数を呼び出し
         fetchPosts { posts in
@@ -193,6 +193,21 @@ Circle()
     self.label.text = data
 }
 ```
+
+
+## 同時実効性とは
+- 同時実行性とは、複数の操作が並行して実行されることを可能にする特製のこと
+- async/await構文による非同期プログラミングで実現できる
+- 同時タスクを実行できる async let 
+- グループに基づいて複数の子タスクを実行できるTask Group
+- Unstructured Tasks
+- Detached Tasks
+
+
+
+
+
+
 
 ## メモ
 - iOS15からasync{}キーワードが登場したものの、XCode13より廃止となりTask{}キーワードに変更された

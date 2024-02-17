@@ -57,14 +57,18 @@ class Webservice {
      
      
     // MARK: -
-    ///コールバック関数をContinuationの形に書き換える
-    ///（今回は元の関数がサードAPIで、上と同じように書き換えができないものと仮定する）
+    ///Continuationを使ってコールバック関数をasync/awaitスタイルに変換する
+    ///（今回は元のfetchNews関数がアクセス権のないサードAPIとし、上と同じように書き換えができないものと仮定する
+    ///取得コードにアクセスできる場合は、実際にアクセスして関数を変更した方が良い）
     func fetchNewsAsync(sourceId: String, url: URL?) async throws -> [NewsArticle] {
         
+        //withCheckedThrowingContinuationは非同期処理が成功した場合に結果を返すか、失敗した場合にエラーを投げる
         try await withCheckedThrowingContinuation { continuation in
+            //withCheckedThrowingContinuationの中でコールバック関数を呼び出す
             fetchNews(sourceId: sourceId, url: url) { result in
                 switch result {
                 case .success(let newsArticles):
+                    //非同期関数を完了し、結果を返して一時停止状態から復帰
                     continuation.resume(returning: newsArticles)
                 case .failure(let error):
                     continuation.resume(throwing: error)
@@ -74,6 +78,7 @@ class Webservice {
     }
     
     
+    ///コールバックベースのサードAPI（アクセス権なし）
     private func fetchNews(sourceId: String, url: URL?, completion: @escaping (Result<[NewsArticle], NetworkError>) -> Void) {
         
         guard let url = url else {

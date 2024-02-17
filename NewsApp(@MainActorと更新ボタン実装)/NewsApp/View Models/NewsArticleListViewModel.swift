@@ -17,12 +17,11 @@ class NewsArticleListViewModel: ObservableObject {
         do {
             let newsArticles = try await Webservice().fetchNewsAsync(sourceId: sourceId, url: Constants.Urls.topHeadlines(by: sourceId))
             ///@MainActorを使用することでディスパッチに関するコードが不要になる
-            self.newsArticles = newsArticles.map(NewsArticleViewModel.init)
             /*
-             DispatchQueue.main.async {
              DispatchQueue.main.async {
              self.newsArticles = newsArticles.map(NewsArticleViewModel.init)
              }*/
+            self.newsArticles = newsArticles.map(NewsArticleViewModel.init)
         } catch {
             print(error)
         }
