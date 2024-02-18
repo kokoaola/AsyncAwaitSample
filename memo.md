@@ -96,15 +96,26 @@ DispatchQeue.global().async{
 
 
 ### 非同期処理を行う関数の作成方法
+#### 同期処理
+- 同期処理では、ある処理が完了するまでプログラムの実行がその場で停止する。この間、プログラムは他の作業を行うことができず、処理が完了するまで次の行に進むことができない
+#### 非同期処理とawait
+- 非同期処理では、awaitで非同期タスクの完了を待つ
+- 同期処理との違いは、プログラムの実行そのものはブロックされないため、非同期タスクが完了するのを待つ間に、プログラムは他のタスクを実行することができる
+- 非同期タスクが完了すると、プログラムの実行はawaitの次の行から再開される
+#### async/await
+- asyncキーワードは、関数が非同期処理を行うことを示す
+- asyncキーワードを持つ関数内で非同期処理を待つ場合、awaitキーワードを使用する
+
 ```Swift
 ///asyncをつける
     private func getDate() async -> CurrentDate?{
         //URLをアンラップ
-        guard let url = URL(string: "https://glorious-neat-antarctopelta.glitch.me/current-date")else{
+        guard let url = URL(string: "https://.....")else{
             fatalError("URL is incorrect!")
         }
-        //URLが間違っていない場合は非同期でセッション開始
-        //エラーが生じる可能性があるでthrowsとtryをつけている
+        //非同期でセッション開始        
+        //awaitで非同期処理を待つ
+        //throws：関数がエラーを投げる可能性があることを示す。この関数を呼び出す際は、tryキーワードを使ってエラーハンドリングを行う
         try await URLSession.shared.data(from: url)
     }
 ```
@@ -195,14 +206,33 @@ Circle()
 ```
 
 
-## 同時実効性とは
+## 同時実行性とは
 - 同時実行性とは、複数の操作が並行して実行されることを可能にする特製のこと
 - async/await構文による非同期プログラミングで実現できる
 - 同時タスクを実行できる async let 
 - グループに基づいて複数の子タスクを実行できるTask Group
 - Unstructured Tasks
 - Detached Tasks
+### ２つタスクを同時に実行するサンプル
+```Swift
+/*
+    //通常上から順に実行される２つのデータの取得だが、順番を待たずに非同期で同時実行したい
+    //元のコード
+     let (equifaxData, _) = try await URLSession.shared.data(from: equifaxUrl)
+     
+     let (experianData, _) = try await URLSession.shared.data(from: experianUrl)
+     */
+     
+    //async letを使用することで、複数の非同期処理を同時に開始し、後でその結果をawaitで取得できる
+    async let (equifaxData, _) = URLSession.shared.data(from: equifaxUrl)
 
+    async let (experianData, _) =  URLSession.shared.data(from: experianUrl)
+
+    //URLSessionの呼び出しによって開始された非同期のネットワークリクエストの完了をawaitで待つ
+    let equifaxCreditScore = try? JSONDecoder().decode(CreditScore.self, from: try await equifaxData)
+    
+    let experianCreditScore = try? JSONDecoder().decode(CreditScore.self, from: try await experianData)
+    ```
 
 
 
