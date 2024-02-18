@@ -213,16 +213,18 @@ Circle()
 - グループに基づいて複数の子タスクを実行できるTask Group
 - Unstructured Tasks
 - Detached Tasks
+
 ### ２つタスクを同時に実行するサンプル
+- データの取得処理は、複数ある場合通常上から順に実行されるが、順番を待たずに非同期で同時実行したいというパターン
+#### 元のコード
 ```Swift
-/*
-    //通常上から順に実行される２つのデータの取得だが、順番を待たずに非同期で同時実行したい
-    //元のコード
-     let (equifaxData, _) = try await URLSession.shared.data(from: equifaxUrl)
-     
-     let (experianData, _) = try await URLSession.shared.data(from: experianUrl)
-     */
-     
+    let (equifaxData, _) = try await URLSession.shared.data(from: equifaxUrl)
+    
+    let (experianData, _) = try await URLSession.shared.data(from: experianUrl)
+```
+
+#### 同時実行に変更したコード
+```Swift  
     //async letを使用することで、複数の非同期処理を同時に開始し、後でその結果をawaitで取得できる
     async let (equifaxData, _) = URLSession.shared.data(from: equifaxUrl)
 
@@ -232,13 +234,88 @@ Circle()
     let equifaxCreditScore = try? JSONDecoder().decode(CreditScore.self, from: try await equifaxData)
     
     let experianCreditScore = try? JSONDecoder().decode(CreditScore.self, from: try await experianData)
-    ```
+
+```
+
+### ループで実行
+```Swift
+///WebAPIタスクを２つ同時実行する関数
+func getAPR(userId: Int) async throws -> Double {
+    
+    //１つめのWebAPIの処理....
+    //２つめのWebAPIの処理....
+
+    return [...]
+}
+
+
+///ループで使用するとき
+let ids = [1,2,3,4,5]//処理対象のユーザーID群
+//id1のタスクは２つの非同期処理が完了した時点で初めてコンプリートされ、id2のタスクにすすむ
+//非同期処理が10個貯まるわけではないことに注意
+Task {
+    for id in ids {
+        try Task.checkCancellation()
+        let apr = try await getAPR(userId: id)
+        print(id, apr)
+    }
+}
+
+```
 
 
 
+タスクの処理のキャンセル
+- Task.checkCancellation()を使用すると、asyncの関数で条件を満たした時、エラーを投げて非同期タスクをキャンセルできる
+- .checkCancellation：非同期タスクがキャンセルされたかどうかをチェックする関数
+
+```Swift  
+
+///ユーザーIDを渡すと、非同期でAPRを取得する関数
+func getAPR(userId: Int) async throws -> Double {
+    
+    //IDが２の時はエラー
+    if userId == 2 {
+        throw NetworkError.invalidId
+    }
+    
+    //１つめのWebAPIの処理....
+    //２つめのWebAPIの処理....
+
+    return [...]
+}
+
+
+let ids = [1,2,3,4,5] //処理対象のユーザーID群
+var invalidIds: [Int] = [] //無効なIDを格納する配列
+
+Task {
+    for id in ids {
+        do {
+            //非同期タスクが実際に開始される前に、checkCancellationでタスクがキャンセルされていないかを確認する
+            //キャンセルされていればCancellationErrorを投げタスクを即座に終了させ、エラーハンドリングのcatchブロックに処理が移る
+            try Task.checkCancellation()
+            //指定したユーザーIDでAPRを非同期に取得
+            let apr = try await getAPR(userId: id)
+            //取得したAPRを出力
+            print(apr)
+        } catch {
+            //エラーが発生した場合はエラーを出力し、該当するユーザーIDはinvalidIds配列に追加
+            print(error)
+            invalidIds.append(id)
+        }
+    }
+    //無効なIDのリストを出力
+    print(invalidIds)
+}
+
+
+```
 
 
 
 ## メモ
 - iOS15からasync{}キーワードが登場したものの、XCode13より廃止となりTask{}キーワードに変更された
 - asyncDetached{}も同様に廃止となり、Task.detached{}に変更された
+
+
