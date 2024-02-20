@@ -1,4 +1,8 @@
+
+///アクセスできないサードAPIの関数をasync/await化
 import UIKit
+
+
 
 ///ネットワークエラーを定義するenum
 enum NetworkError: Error {

@@ -34,14 +34,7 @@ struct Constants {
 
 ///ユーザーIDを渡すと、非同期でAPRを取得する関数
 func getAPR(userId: Int) async throws -> Double {
-    //IDが２の時はエラーとしてタスクをキャンセル
-    //処理を中断し、呼び出し元に対してタスクが成功しなかったことを通知する
-    if userId == 2 {
-        throw NetworkError.invalidId
-    }
-    
-    
-    
+
     //EquifaxとExperianのURLを取得し、いずれかがnilならエラーを投げる
     guard let equifaxUrl = Constants.Urls.equifax(userId: userId),
           let experianUrl = Constants.Urls.experian(userId: userId) else {
@@ -81,65 +74,57 @@ func getAPR(userId: Int) async throws -> Double {
 
 
 ///クレジットスコアを基にAPRを計算する関数（ダミーの実装）
-///重要ではない
+///今回の内容において重要ではない
 func calculateAPR(creditScores: [CreditScore]) -> Double {
-    
     let sum = creditScores.reduce(0) { next, credit in
         return next + credit.score
     }
-    // calculate the APR based on the scores
     return Double((sum/creditScores.count)/100)
 }
 
 
-///単体で使用するとき
-//Task {
-//    let apr = try await getAPR(userId: 1)
-//    print(apr,"%")
-//}
-
-
-///ループで使用するとき
-///id1のタスクは２つの非同期処理が完了した時点で初めてコンプリートされ、id2のタスクにすすむ
-////非同期処理が10個貯まるわけではないことに注意
+// MARK: -
 
 let ids = [1,2,3,4,5] //処理対象のユーザーID群
-var invalidIds: [Int] = [] //無効なIDを格納する配列
 
+///使用するとき
+///タスクグループで
+///タスクグループとは：複数の非同期タスクを並列に実行し、全てのタスクが完了するまで待つこと。グループのタスクが実行中であっても新たなタスクを追加することができる。タスクグループ内で発生したエラーは、グループの外で一括して捕捉し、処理する。
+///１のループの方法だと、２つの非同期処理を持つタスクが１件ずつ逐次的に実行されるが、タスクグループは２つの非同期処理を持つ５つのタスクを全てを作成して並列で実行し、結果を集約する
+///タスクグループの使用例：タスクグループを使用し、複数のAPIエンドポイントからのデータ取得を並列タスクとして同時にフェッチし、全てのデータが揃った後で次の処理を行うなど
 
-///このコードを出力すると、id2以降は実行されなくなってしまう
-///理由：idが2のときにgetAPR()関数から投げられるNetworkError.invalidIdエラーが捕捉されず、プログラムの実行が停止するため
-///解決策：do-catchブロックを追加してエラー時の処理を追加することで、id3以降も続けられるようにする
-//Task {
-//    for id in ids {
-//        try Task.checkCancellation()
-//        let apr = try await getAPR(userId: id)
-//        print(id, apr)
-//    }
-//}
-
-
-
-///エラーハンドリングを追加したコード
-///id3以降も無視されなくなる
-Task {
-
-    for id in ids {
-        do {
-            ///.checkCancellation：子タスク（２つのうちの１つのタスク）にエラーがないかどうかをチェックする
-            ///キャンセルされていればCancellationErrorを投げタスクを即座に終了させ、エラーハンドリングのコードブロックに処理が移る
-            try Task.checkCancellation()
-            //指定したユーザーIDでAPRを非同期に取得
-            let apr = try await getAPR(userId: id)
-            //取得したAPRを出力
-            print(apr)
-        } catch {
-            //try await getAPR(userId: id)とtry Task.checkCancellation()のいずれかでエラーが発生した場合このcatchブロックが実行される
-            //エラーが発生した場合はエラーを出力し、該当するユーザーIDはinvalidIds配列に追加
-            print(error)
-            invalidIds.append(id)
+func getAPRForAllUsers(ids: [Int]) async throws -> [Int: Double] {
+    //各ユーザーIDとAPRの取得結果を格納する辞書
+    var userAPR: [Int: Double] = [:]
+    
+    //try awaitとwithThrowingTaskGroupでラップ
+    //withThrowingTaskGroup: 複数の非同期タスクをグループ化して実行し、タスクから投げられる可能性のあるエラーを扱う。グループ内のタスクが投げるエラーは一箇所でハンドリングする
+    //of:で非同期タスクが返す値の型を指定し、body内でタスクグループを作成する
+    try await withThrowingTaskGroup(of: (Int, Double).self, body: { group in
+        
+        //IDをループさせながら、タスクを追加する
+        //タスクグループ内の各タスクが非同期に実行され、それぞれが(id, apr)形式のタプルを返す処理
+        for id in ids {
+            group.addTask {
+                //どのタスクから終了するかわからないため、データの競合が発生しないように、タスクグループ内から変数を変更したりはできないようになっている。タスクが完了したらreturnして値を返す
+                let apr = try await getAPR(userId: id)
+                return (id, apr)
+            }
         }
-    }
-    //無効なIDのリストを出力
-    print(invalidIds)
+
+        //タスクグループ内の各タスクが完了するたびに、完了したタスクの結果だけを取り出し、一つずつ処理する
+        //処理後は次のタスクが完了するまで待機
+        //タスクグループ内の全てのタスクが完了し、それぞれの結果が処理されるまで繰り返す
+        for try await (id, apr) in group {
+            userAPR[id] = apr
+        }
+    })
+    
+    return userAPR
+    
+}
+
+Task {
+    let userAPRs = try await getAPRForAllUsers(ids: ids)
+    print(userAPRs)
 }
