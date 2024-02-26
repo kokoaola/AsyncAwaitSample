@@ -87,10 +87,9 @@ func calculateAPR(creditScores: [CreditScore]) -> Double {
 
 let ids = [1,2,3,4,5] //処理対象のユーザーID群
 
-///使用するとき
-///タスクグループで
+///タスクグループで使用する
 ///タスクグループとは：複数の非同期タスクを並列に実行し、全てのタスクが完了するまで待つこと。グループのタスクが実行中であっても新たなタスクを追加することができる。タスクグループ内で発生したエラーは、グループの外で一括して捕捉し、処理する。
-///１のループの方法だと、２つの非同期処理を持つタスクが１件ずつ逐次的に実行されるが、タスクグループは２つの非同期処理を持つ５つのタスクを全てを作成して並列で実行し、結果を集約する
+///１のループの方法だと、２つの非同期処理を持つタスクが１件ずつ逐次的に実行されるが、この例では２つの非同期処理（子タスク）を持つ５つのタスクからなるタスクグループを作成。並列で子タスクを実行し、結果を集約する
 ///タスクグループの使用例：タスクグループを使用し、複数のAPIエンドポイントからのデータ取得を並列タスクとして同時にフェッチし、全てのデータが揃った後で次の処理を行うなど
 
 func getAPRForAllUsers(ids: [Int]) async throws -> [Int: Double] {
@@ -100,11 +99,13 @@ func getAPRForAllUsers(ids: [Int]) async throws -> [Int: Double] {
     //try awaitとwithThrowingTaskGroupでラップ
     //withThrowingTaskGroup: 複数の非同期タスクをグループ化して実行し、タスクから投げられる可能性のあるエラーを扱う。グループ内のタスクが投げるエラーは一箇所でハンドリングする
     //of:で非同期タスクが返す値の型を指定し、body内でタスクグループを作成する
+    ///タスクグループ
     try await withThrowingTaskGroup(of: (Int, Double).self, body: { group in
         
         //IDをループさせながら、タスクを追加する
         //タスクグループ内の各タスクが非同期に実行され、それぞれが(id, apr)形式のタプルを返す処理
         for id in ids {
+            //group.addTask {}はクロージャを非同期の子タスクとしてタスクグループに追加し、並列に実行させる
             group.addTask {
                 //どのタスクから終了するかわからないため、データの競合が発生しないように、タスクグループ内から変数を変更したりはできないようになっている。タスクが完了したらreturnして値を返す
                 let apr = try await getAPR(userId: id)
@@ -124,6 +125,7 @@ func getAPRForAllUsers(ids: [Int]) async throws -> [Int: Double] {
     
 }
 
+///親タスク
 Task {
     let userAPRs = try await getAPRForAllUsers(ids: ids)
     print(userAPRs)
