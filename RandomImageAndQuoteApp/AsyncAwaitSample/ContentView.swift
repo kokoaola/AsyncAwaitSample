@@ -1,0 +1,41 @@
+//
+//  ContentView.swift
+//  AsyncAwaitSample
+//
+//  Created by koala panda on 2024/01/15.
+//
+
+import SwiftUI
+
+
+struct ContentView: View {
+    
+    ///ビューモデルへアクセス
+    @StateObject private var randomImageListVM = RandomImageListViewModel()
+    
+    var body: some View {
+        ///取得したデータをリスト表示
+        ///ViewModelがIdentifiableに準拠しているので、idは不要
+        List(randomImageListVM.randomImages) { randomImage in
+            
+            HStack {
+                ///mapメソッドでUIImageが存在する場合（nilでない場合）にのみ、クロージャ内のコードを実行
+                randomImage.image.map {
+                    Image(uiImage: $0)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                }
+                Text(randomImage.quote)
+            }
+            
+        }.task {
+            await randomImageListVM.getRandomImages(ids: Array(100...120))
+        }
+    }
+}
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
+}

@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3B89091D2B8DBCBB0035BC5A /* RandomImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B89091C2B8DBCBB0035BC5A /* RandomImage.swift */; };
+		3B89091F2B8DBCDB0035BC5A /* Webservice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B89091E2B8DBCDB0035BC5A /* Webservice.swift */; };
+		3B8909212B8DBCF40035BC5A /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B8909202B8DBCF40035BC5A /* Constants.swift */; };
+		3B8909232B8DDD230035BC5A /* RandomImageListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B8909222B8DDD230035BC5A /* RandomImageListViewModel.swift */; };
 		3BE0959B2B5577F70009E2EB /* AsyncAwaitSampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BE0959A2B5577F70009E2EB /* AsyncAwaitSampleApp.swift */; };
 		3BE0959D2B5577F70009E2EB /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BE0959C2B5577F70009E2EB /* ContentView.swift */; };
 		3BE0959F2B5577F80009E2EB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3BE0959E2B5577F80009E2EB /* Assets.xcassets */; };
@@ -14,6 +18,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3B89091C2B8DBCBB0035BC5A /* RandomImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RandomImage.swift; sourceTree = "<group>"; };
+		3B89091E2B8DBCDB0035BC5A /* Webservice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Webservice.swift; sourceTree = "<group>"; };
+		3B8909202B8DBCF40035BC5A /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		3B8909222B8DDD230035BC5A /* RandomImageListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RandomImageListViewModel.swift; sourceTree = "<group>"; };
 		3BE095972B5577F70009E2EB /* AsyncAwaitSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AsyncAwaitSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3BE0959A2B5577F70009E2EB /* AsyncAwaitSampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncAwaitSampleApp.swift; sourceTree = "<group>"; };
 		3BE0959C2B5577F70009E2EB /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -32,6 +40,38 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3B8909122B8DBC360035BC5A /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				3B89091E2B8DBCDB0035BC5A /* Webservice.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		3B8909142B8DBC360035BC5A /* View Models */ = {
+			isa = PBXGroup;
+			children = (
+				3B8909222B8DDD230035BC5A /* RandomImageListViewModel.swift */,
+			);
+			path = "View Models";
+			sourceTree = "<group>";
+		};
+		3B8909152B8DBC360035BC5A /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				3B8909202B8DBCF40035BC5A /* Constants.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		3B8909172B8DBC360035BC5A /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				3B89091C2B8DBCBB0035BC5A /* RandomImage.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
 		3BE0958E2B5577F70009E2EB = {
 			isa = PBXGroup;
 			children = (
@@ -51,6 +91,10 @@
 		3BE095992B5577F70009E2EB /* AsyncAwaitSample */ = {
 			isa = PBXGroup;
 			children = (
+				3B8909172B8DBC360035BC5A /* Models */,
+				3B8909122B8DBC360035BC5A /* Services */,
+				3B8909152B8DBC360035BC5A /* Utils */,
+				3B8909142B8DBC360035BC5A /* View Models */,
 				3BE0959A2B5577F70009E2EB /* AsyncAwaitSampleApp.swift */,
 				3BE0959C2B5577F70009E2EB /* ContentView.swift */,
 				3BE0959E2B5577F80009E2EB /* Assets.xcassets */,
@@ -138,7 +182,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				3BE0959D2B5577F70009E2EB /* ContentView.swift in Sources */,
+				3B8909212B8DBCF40035BC5A /* Constants.swift in Sources */,
+				3B89091F2B8DBCDB0035BC5A /* Webservice.swift in Sources */,
+				3B89091D2B8DBCBB0035BC5A /* RandomImage.swift in Sources */,
 				3BE0959B2B5577F70009E2EB /* AsyncAwaitSampleApp.swift in Sources */,
+				3B8909232B8DDD230035BC5A /* RandomImageListViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
