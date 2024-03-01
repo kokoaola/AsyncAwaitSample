@@ -96,10 +96,10 @@ func getAPRForAllUsers(ids: [Int]) async throws -> [Int: Double] {
     //各ユーザーIDとAPRの取得結果を格納する辞書
     var userAPR: [Int: Double] = [:]
     
+    ///タスクグループ作成
     //try awaitとwithThrowingTaskGroupでラップ
     //withThrowingTaskGroup: 複数の非同期タスクをグループ化して実行し、タスクから投げられる可能性のあるエラーを扱う。グループ内のタスクが投げるエラーは一箇所でハンドリングする
     //of:で非同期タスクが返す値の型を指定し、body内でタスクグループを作成する
-    ///タスクグループ
     try await withThrowingTaskGroup(of: (Int, Double).self, body: { group in
         
         //IDをループさせながら、タスクを追加する

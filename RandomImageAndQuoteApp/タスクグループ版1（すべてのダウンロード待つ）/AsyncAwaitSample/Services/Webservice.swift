@@ -4,6 +4,7 @@
 //
 //  Created by koala panda on 2024/02/27.
 //
+///各IDに対してより多くのタスクを同時に実行できるようになったTaskGroup版
 
 ///Webserviceファイルはランダムな画像とランダムなコードのデータを取得する
 import Foundation
@@ -26,20 +27,54 @@ class Webservice {
         //ランダム画像を保持するための空の配列を初期化
         var randomImages: [RandomImage] = []
         
+        
+        //MARK: -
+        ///タスクグループ作成
+        ///タスクを作る -> returnで結果を渡す -> 結果を非同期シーケンスで処理
+        //try awaitとwithThrowingTaskGroupでラップ
+        //withThrowingTaskGroup: 複数の非同期タスクをグループ化して実行し、グループ内のすべてのタスクから受け取るエラーをいっぺんにハンドリングする
+        //of:で非同期タスクが返す結果の値の型を指定する（何も返さない場合はVoid.self）
+        //body:内でタスクグループを作成する
+        try await withThrowingTaskGroup(of: (Int, RandomImage).self, body: { group in
+            
+            ///IDをループさせながら、タスクを追加&実行
+            //group.addTask {}のクロージャの中身がタスクの本体、ここではasync letで作成した２つの子タスク（getRandomImage）を作成して非同期で実行している
+            //データの競合を防ぐため、タスクグループ内から変数を変更はできない。タスクが完了したものからreturnで値を外部に渡す
+            for id in ids {
+                group.addTask {
+                    return (id, try await self.getRandomImage(id: id))
+                }
+            }
+            
+            
+            ///非同期シーケンス部分
+            ///タスクグループ内のすべての子タスクが完了したものから順に結果を取り出し、一つずつ処理する
+            //処理後は次のタスクが完了するまで待機
+            //タスクグループ内の全てのタスクが完了し、それぞれの結果が処理されるまで繰り返す
+            for try await (_, randomImage) in group {
+                // コンソールにランダム画像を出力（デバッグ用）
+                print(randomImage)
+                // 取得したランダム画像を配列に追加
+                randomImages.append(randomImage)
+            }
+        })
+        
+        /*async let版
         //idをループさせ、各IDに対してgetRandomImage型のデータを取得
         //awaitで待機するため、取得が完了するまで次の処理は開始されない
         for id in ids {
             //ランダム画像を非同期に取得したら配列に追加
             let randomImage = try await getRandomImage(id: id)
             randomImages.append(randomImage)
-        }
+        }*/
+        
         //全てのランダム画像が含まれた配列を返す
         return randomImages
     }
     
     
     ///指定されたIDを使用してランダム画像を非同期に取得するプライベート関数
-    private func getRandomImage(id: Int) async throws -> RandomImage {
+    func getRandomImage(id: Int) async throws -> RandomImage {
         
         //画像用URLを取得し、無効な場合はエラーを投げる
         guard let url = Constants.Urls.getRandomImageUrl() else {
@@ -51,7 +86,8 @@ class Webservice {
             throw NetworkError.badUrl
         }
         
-        //async letでランダム画像と引用のデータ、2つの非同期タスクを独立したバックグラウンドスレッドで並列に開始
+        //async letで2つの子タスクを作成（ランダム画像取得と引用のデータ取得）
+        //2つの非同期タスクを独立したバックグラウンドスレッドで並列に開始
         //それぞれの非同期処理を並列で開始するが、お互いの処理の完了を待たずに次に進み、awaitに到達したらそれぞれのタイミングで待機する
         async let (imageData, _) = URLSession.shared.data(from: url)
         async let (randomQuoteData, _) = URLSession.shared.data(from: randomQuoteUrl)
