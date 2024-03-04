@@ -461,8 +461,33 @@ Task
 URL、URLSession、Notifications、FileHandleなど
 
 
+### ディスパッチキューとシングルキュー
+ディスパッチキューは同時に同じコードの処理を行い、シングルキューは最初に処理を行っているスレッド以外はアクセスできないようになる
+またはNSLockでロックすると、ロックを解除するまで別のトランザクションがアクセスできなくなる
+
 ### アクター
-同時にお金を引き出した時などにロックをかける
+#### Shared Mutable State（共有可変状態）
+- 複数のスレッドやプロセスから同時にアクセス可能、変更可能なデータや状態
+- データの競合をなくして、他のスレッドが介入できないようにする
+- アクターを使用する条件：同時実行と競合状態を持つ時
+- アクターを使用した関数はasyncが自動で適応され、処理中はawaitで一時停止し他のスレッドが介入できなくなる。データの競合がなくなり、その間プロパティも参照できなくなる。プロパティを変更しない、参照しない、100%競合しないと確信できる時は非分離nonisolatedキーワードをつけることでアクターから除外でき、Taskとawaitが不要になる
+- actor.playgroundとbank.playgroundを参照
+
+### メインアクター
+- @MainActorでマークしたクラスの関数、プロパティはメインスレッドで処理される
+-  クラスや関数名にawait MainActor.run {}は不要になる
+```
+    //バックグラウンドスレッドで実行したあとは
+Task.detached {
+    print(Thread.isMainThread) //false
+    let todos = try await Webservice().getAllTodosAsync(url: url)
+    ///メインスレッドを切り替える
+    await MainActor.run {
+        print(Thread.isMainThread) //true
+        self.todos = todos.map(TodoViewModel.init)
+    }
+}
+```
 
 ## メモ
 - iOS15からasync{}キーワードが登場したものの、XCode13より廃止となりTask{}キーワードに変更された

@@ -9,6 +9,7 @@ import SwiftUI
 
 
 
+
 @MainActor
 class BankAccountViewModel: ObservableObject {
     
@@ -71,16 +72,25 @@ struct ContentView: View {
     
     var body: some View {
         VStack {
+            //            Button("Withdraw") {
+            //
+            //                Task.detached {
+            //                    await bankAccountVM.withdraw(500)
+            //                }
+            //
+            //                Task.detached  {
+            //                    await bankAccountVM.withdraw(200)
+            //                }
+            //            }
+            
+            //100回送金する
             Button("Withdraw") {
                 
-                Task.detached {
-                    await bankAccountVM.withdraw(500)
-                }
-                
-                Task.detached  {
-                    await bankAccountVM.withdraw(200)
+                DispatchQueue.concurrentPerform(iterations: 100) { _ in
+      
                 }
             }
+            
             
             Text("\(bankAccountVM.currentBalance ?? 0.0)")
             
